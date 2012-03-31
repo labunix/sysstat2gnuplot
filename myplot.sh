@@ -1,6 +1,16 @@
 #!/bin/bash
+# ver 0.1
+# labunix@linux.jp
+#
+# 更新履歴
+# 2012/04/01
+#
+# デフォルトをsvgではなくpngに変更
+# メモリ    %計算の*100抜けの修正
+# スワップ　%計算の追加
+
 set -e
-DATA="svg"
+DATA="png"
 
 if [ `id -u` -ne "0" ];then
   echo "Not Permit User!"
@@ -39,7 +49,7 @@ mem)
     LANG=C sar -r -f /var/log/sysstat/sa${DAY} | \
     sed s/" * "/","/g | \
     grep -v "RESTART\|^\$\|^Average\|^Linux\|%" | \
-    awk -F\, '{print $1 "\t" $2/'${MEMTOTAL}' "\t" $3/'${MEMTOTAL}'"\t" $5/'${MEMTOTAL}'"\t" $6/'${MEMTOTAL}'}' > "$INPUT" 
+    awk -F\, '{print $1 "\t" ($2/'${MEMTOTAL}')*100 "\t" ($3/'${MEMTOTAL}')*100"\t" ($5/'${MEMTOTAL}')*100 "\t" ($6/'${MEMTOTAL}')*100 }' > "$INPUT" 
     ;;
 net)
     # TITLE0=time
@@ -56,17 +66,17 @@ net)
     ;;
 swap)
     # TITLE0=time
-    export TITLE1=swpused;
-    export TITLE2=swpcad;
-    export TITLE3=swpused;
-    export TITLE4=swpcad;
+    export TITLE1='kbswpused/(kbswpused+kbswpfree)';
+    export TITLE2='kbswpfree/(kbswpused+kbswpfree)';
+    export TITLE3='%swpused';
+    export TITLE4='%swpcad';
     export INPUT=swap.txt;
     export OUTPUT="swap.${DATA}";
     export SWAPTOTAL=`grep SwapTotal /proc/meminfo  | awk '{print $2}'`
     LANG=C sar -S -f /var/log/sysstat/sa${DAY} | \
     sed s/" * "/","/g | \
     grep -v "RESTART\|^\$\|^Average\|^Linux\|%" | \
-    awk -F\, '{print $1 "\t" $4 "\t" $6 "\t" $4 "\t" $6}' > "$INPUT"
+    awk -F\, '{print $1 "\t" ($3/($3+$2))*100 "\t" ($2/($3+$2))*100 "\t" $4 "\t" $6}' > "$INPUT"
     ;;
 disk)
     # TITLE0=time
