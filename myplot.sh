@@ -8,6 +8,9 @@
 # デフォルトをsvgではなくpngに変更
 # メモリ    %計算の*100抜けの修正
 # スワップ　%計算の追加
+#
+# スワップ　せっかくSwapTotalを取得しているので、
+#           (swapfree+swapuse)の計算と置き換え
 
 set -e
 DATA="png"
@@ -66,8 +69,8 @@ net)
     ;;
 swap)
     # TITLE0=time
-    export TITLE1='kbswpused/(kbswpused+kbswpfree)';
-    export TITLE2='kbswpfree/(kbswpused+kbswpfree)';
+    export TITLE1='kbswpused/SwapTotal';
+    export TITLE2='kbswpfree/SwapTotal';
     export TITLE3='%swpused';
     export TITLE4='%swpcad';
     export INPUT=swap.txt;
@@ -76,7 +79,7 @@ swap)
     LANG=C sar -S -f /var/log/sysstat/sa${DAY} | \
     sed s/" * "/","/g | \
     grep -v "RESTART\|^\$\|^Average\|^Linux\|%" | \
-    awk -F\, '{print $1 "\t" ($3/($3+$2))*100 "\t" ($2/($3+$2))*100 "\t" $4 "\t" $6}' > "$INPUT"
+    awk -F\, '{print $1 "\t" ($3/'${SWAPTOTAL}')*100 "\t" ($2/'${SWAPTOTAL}')*100 "\t" $4 "\t" $6}' > "$INPUT"
     ;;
 disk)
     # TITLE0=time
