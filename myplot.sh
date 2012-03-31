@@ -112,6 +112,9 @@ esac
 # for png 2400x1350 -> 16:9
 (echo 'set terminal png size 3200,1800';
  echo 'set output "'$OUTPUT'"';
+# add hostname
+# echo 'set title "'$1 `hostname -s`'"';
+echo 'set title "'$1 '"';
  echo 'set xdata time';
  echo 'set key outside';
  echo 'set timefmt "%H:%M:%S"';
