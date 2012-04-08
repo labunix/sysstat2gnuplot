@@ -109,7 +109,7 @@ esac
 #(echo 'set terminal png size 1600,1200';
 # for png 2560x1440
 #(echo 'set terminal png size 2560,1440';
-# for png 2400x1350 -> 16:9
+# for png 3200x1800 -> 16:9
 (echo 'set terminal png size 3200,1800';
  echo 'set output "'$OUTPUT'"';
 # add hostname
